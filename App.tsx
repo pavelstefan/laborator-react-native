@@ -1,20 +1,12 @@
-import { SafeAreaView } from 'react-native';
-import Todo from './src/components/Todo';
-import TodoInput from './src/components/TodoInput';
-import styled from 'styled-components/native';
+import 'react-native-get-random-values';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import TodoList from './src/screens/TodoList';
+import FinishedTodo from './src/screens/FinishedTodo';
 import TodoContext, { ITodo, TODO_STATUS } from './src/context/TodoContext';
 import { useState } from 'react';
 
-const Container = styled.View`
-  padding: 8px;
-  height: 100%;
-  width: 100%;
-`;
-
-const Space = styled.View`
-  width: 100%;
-  height: 8px;
-`;
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   const [todos, setTodos] = useState<ITodo[]>([]);
@@ -24,28 +16,35 @@ export default function App() {
     setTodos([...todos, newItem]);
   }
 
-  const updateTodo = (indexToChange: number, status: TODO_STATUS) => {
+  const updateTodo = (id: string, status: TODO_STATUS) => {
     setTodos(
-      todos.map((data, index) => (
-        index === indexToChange ? { ...data, status } : data
+      todos.map((data) => (
+        data.id === id ? { ...data, status } : data
       ))
     )
   }
 
   return (
-    <SafeAreaView>
-      <Container >
-        <TodoContext.Provider value={{
-          addTodo,
-          updateTodo
-        }}>
-          <TodoInput />
-          <Space />
-          {
-            todos.map((todo, index) => <Todo index={index} todo={todo} />)
-          }
-        </TodoContext.Provider>
-      </Container>
-    </SafeAreaView >
+    <TodoContext.Provider value={{
+      addTodo,
+      updateTodo,
+      allTodos: todos
+    }}>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName='TodoList'>
+          <Stack.Screen name="FinishedTodos" component={FinishedTodo} />
+          <Stack.Screen name="TodoList" component={TodoList} options={{
+            title: 'Overview',
+            headerStyle: {
+              backgroundColor: '#f4511e',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+          }} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </TodoContext.Provider>
   );
 }

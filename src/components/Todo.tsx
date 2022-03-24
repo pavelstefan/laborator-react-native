@@ -20,29 +20,31 @@ const Title = styled.Text`
 const labelMap: { [key in TODO_STATUS]: string } = {
     [TODO_STATUS.CREATED]: 'Start',
     [TODO_STATUS.STARTED]: 'Finish',
-    [TODO_STATUS.FINISHED]: '',
+    [TODO_STATUS.FINISHED]: 'Reopen',
 }
 
 
-const Todo: React.FC<{ todo: ITodo; index: number }> = ({ todo, index }) => {
+const Todo: React.FC<{ todo: ITodo }> = ({ todo }) => {
     const { status, title } = todo;
     const { updateTodo } = useTodoContext();
     const handlePress = () => {
         if (status == TODO_STATUS.CREATED) {
-            updateTodo(index, TODO_STATUS.STARTED);
+            updateTodo(todo.id, TODO_STATUS.STARTED);
         }
 
         if (status == TODO_STATUS.STARTED) {
-            updateTodo(index, TODO_STATUS.FINISHED);
+            updateTodo(todo.id, TODO_STATUS.FINISHED);
+        }
+
+        if (status == TODO_STATUS.FINISHED) {
+            updateTodo(todo.id, TODO_STATUS.CREATED);
         }
     }
 
     return (
         <Container>
             <Title>{title}</Title>
-            {
-                status === TODO_STATUS.FINISHED ? <></> : <CustomButton label={labelMap[status]} onPress={handlePress} />
-            }
+            <CustomButton label={labelMap[status]} onPress={handlePress} />
         </Container>
     )
 };
