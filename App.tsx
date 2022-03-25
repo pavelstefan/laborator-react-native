@@ -1,28 +1,55 @@
+// import 'react-native-gesture-handler';
 import 'react-native-get-random-values';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import TodoList from './src/screens/TodoList';
-import FinishedTodo from './src/screens/FinishedTodo';
 import TodoContext, { ITodo, TODO_STATUS } from './src/context/TodoContext';
-import { useState } from 'react';
-
-const Stack = createNativeStackNavigator();
+import { useState, useEffect } from 'react';
+import TodoNavigator, { TodoTabs } from './src/screens/todo/index';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { API_URL } from './src/constants';
+import About from './src/screens/About';
+const Drawer = createDrawerNavigator();
 
 export default function App() {
   const [todos, setTodos] = useState<ITodo[]>([]);
 
+  const loadTodos = async () => {
+    const items = await fetch(`${API_URL}/todo`)
+      .then(res => res.json())
+      .catch((e) => {
+        console.log(e);
+        return [];
+      });
 
-  const addTodo = (newItem: ITodo) => {
-    setTodos([...todos, newItem]);
+    setTodos(items);
   }
 
-  const updateTodo = (id: string, status: TODO_STATUS) => {
-    setTodos(
-      todos.map((data) => (
-        data.id === id ? { ...data, status } : data
-      ))
-    )
+
+  const addTodo = async (status: TODO_STATUS, title: string) => {
+
+    await fetch(`${API_URL}/todo`, {
+      method: 'POST',
+      body: JSON.stringify({ status, title }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    await loadTodos();
   }
+
+  const updateTodo = async (id: string, status: TODO_STATUS) => {
+    await fetch(`${API_URL}/todo/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    await loadTodos();
+  }
+
+  useEffect(() => {
+    loadTodos();
+  }, [])
 
   return (
     <TodoContext.Provider value={{
@@ -31,19 +58,11 @@ export default function App() {
       allTodos: todos
     }}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName='TodoList'>
-          <Stack.Screen name="FinishedTodos" component={FinishedTodo} />
-          <Stack.Screen name="TodoList" component={TodoList} options={{
-            title: 'Overview',
-            headerStyle: {
-              backgroundColor: '#f4511e',
-            },
-            headerTintColor: '#fff',
-            headerTitleStyle: {
-              fontWeight: 'bold',
-            },
-          }} />
-        </Stack.Navigator>
+        <Drawer.Navigator initialRouteName="About" screenOptions={{ header: () => null }}>
+          <Drawer.Screen name="Todo" component={TodoNavigator} />
+          <Drawer.Screen name="TodoTabs" component={TodoTabs} />
+          <Drawer.Screen name="About" component={About} />
+        </Drawer.Navigator>
       </NavigationContainer>
     </TodoContext.Provider>
   );

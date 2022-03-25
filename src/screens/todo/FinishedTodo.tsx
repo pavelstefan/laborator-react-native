@@ -1,6 +1,6 @@
 import { SafeAreaView, ScrollView } from 'react-native'
-import { ITodo, useFinishedTodos } from '../context/TodoContext';
-import Todo from '../components/Todo';
+import { ITodo, useFinishedTodos } from '../../context/TodoContext';
+import Todo from '../../components/Todo';
 
 const FinishedTodo = () => {
     const itemsToDisplay: ITodo[] = useFinishedTodos();

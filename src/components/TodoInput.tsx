@@ -2,7 +2,7 @@ import { useState } from "react";
 import styled from "styled-components/native";
 import CustomButton from "./CustomButton";
 import { useTodoContext, TODO_STATUS } from "../context/TodoContext";
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid';
 
 const Container = styled.View`
     width: 100%;
@@ -24,11 +24,7 @@ const TodoInput = () => {
 
     const handlePress = () => {
         if (message) {
-            addTodo({
-                status: TODO_STATUS.CREATED,
-                title: message,
-                id: uuidv4()
-            });
+            addTodo(TODO_STATUS.CREATED, message);
             setMessage('');
         }
     }

@@ -13,7 +13,7 @@ export interface ITodo {
 }
 
 export interface ITodoContext {
-    addTodo: (data: ITodo) => void;
+    addTodo: (status: TODO_STATUS, title: string) => void;
     updateTodo: (id: string, status: TODO_STATUS) => void;
     allTodos: ITodo[];
 }

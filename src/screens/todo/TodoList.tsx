@@ -1,10 +1,10 @@
 import { SafeAreaView, ScrollView, FlatList } from 'react-native';
-import Todo from '../components/Todo';
-import TodoInput from '../components/TodoInput';
+import Todo from '../../components/Todo';
+import TodoInput from '../../components/TodoInput';
 import styled from 'styled-components/native';
 import { useNavigation } from '@react-navigation/native';
-import CustomButton from '../components/CustomButton';
-import { ITodo, useInProgressTodos } from '../context/TodoContext';
+import CustomButton from '../../components/CustomButton';
+import { ITodo, useInProgressTodos } from '../../context/TodoContext';
 
 const Container = styled.View`
   padding: 8px;
@@ -20,7 +20,6 @@ const Space = styled.View`
 const TodoList = () => {
     const navigation = useNavigation();
     const itemsToDisplay: ITodo[] = useInProgressTodos();
-    console.log('Something changed', itemsToDisplay);
 
     return (
         <SafeAreaView>
